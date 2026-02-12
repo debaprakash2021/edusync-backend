@@ -3,9 +3,7 @@ import User from "../models/users.models.js";
 import OTP from "../models/otp.models.js";
 import { generateOTP } from "../utils/generateOtp.js";
 import jwt from "jsonwebtoken";
-/**
- * Initiate signup by generating OTP
- */
+
 export const initiateSignupService = async (email) => {
   // 1. Check if user already exists
 
@@ -15,15 +13,15 @@ export const initiateSignupService = async (email) => {
     throw new Error("User already exists");
   }
 
-  // 2. Remove old OTPs
+  // 2. Destroy any existing OTPs for this email
   await OTP.deleteMany({ email });
  
-  // 3. Generate OTP
+  // 3. Generate new OTP (6-digit numeric)
 
   const otp = generateOTP();
   console.log("Generated OTP:", otp);
 
-  // 4. Store OTP (hashed by pre-save middleware)
+  // 4. Hash OTP before saving
   await OTP.create({
     email,
     otp,
@@ -36,9 +34,7 @@ export const initiateSignupService = async (email) => {
   };
 };
 
-/**
- * Verify OTP and create user
- */
+
 export const verifySignupOtpService = async ({
   email,
   otp,
@@ -46,13 +42,13 @@ export const verifySignupOtpService = async ({
   password,
   role,
 }) => {
-  // 1. Fetch OTP
+  // 1. Find OTP record for the email
   const otpRecord = await OTP.findOne({ email });
   if (!otpRecord) {
     throw new Error("OTP expired or not found");
   }
 
-  // 2. Check expiry
+  // 2. Check if OTP is expired
   if (otpRecord.expiresAt < Date.now()) {
     await OTP.deleteOne({ email });
     throw new Error("OTP expired");
@@ -83,7 +79,7 @@ export const verifySignupOtpService = async ({
 };
 
 
-//Login service
+// Login service
 export const loginService = async (email, password) => {
   const user = await User
     .findOne({ email })

@@ -11,6 +11,7 @@ import likes from "./routes/likes.routes.js";
 import comment from "./routes/comment.routes.js";
 import { testing } from "./cron/testing.js";
 import webHookRoutes from "./webhook/webhook.js";
+import chatRoutes from "./routes/chat.routes.js"
 
 
 const app = express();
@@ -46,5 +47,6 @@ app.use("/auth", authRoutes);
 app.use("/artifacts", artifactRoutes);
 app.use("/likes", likes);
 app.use("/comments", comment);
+app.use("/chat",chatRoutes);
 
 export default app;
