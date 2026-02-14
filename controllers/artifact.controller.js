@@ -1,15 +1,16 @@
 import { createArtifactService ,getArtifactsService} from "../services/artifact.service.js";
 
-/**
- * POST /artifacts
- */
+
+
+// POST /artifacts
+// Controller to create a new artifact
 export const createArtifact = async (req, res) => {
   try {
     const artifact = await createArtifactService({
       title: req.body.title,
       content: req.body.content,
       userId: req.user.id,
-      filePath:req.file?.path // injected by auth middleware
+      filePath:req.file?.path           // injected by auth middleware
     });
 
     res.status(201).json({
@@ -28,7 +29,8 @@ export const createArtifact = async (req, res) => {
 
 
 
-
+// GET /artifacts
+// Controller to fetch artifacts based on user role
 export const getArtifacts = async (req, res) => {
   try {
 

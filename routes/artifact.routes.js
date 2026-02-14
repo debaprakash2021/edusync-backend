@@ -7,10 +7,9 @@ import {upload} from "../middlewares/upload.middleware.js";
 
 const router = express.Router();
 
-/**
- * Protected Artifact APIs
- */
+//protected routes for artifact management
+
 router.post("/", authMiddleware, upload.single("media"), createArtifact);
-router.get("/",rateLimiter, authMiddleware, getArtifacts);
+router.get("/",rateLimiter, authMiddleware,authorizeRoles("ADMIN"), getArtifacts);
 
 export default router;

@@ -9,8 +9,14 @@ const threadSchema = new mongoose.Schema(
         required: true
       }
     ],
+
     lastMessage: {
-      type: String
+      type: String,
+      default: ""
+    },
+
+    lastMessageAt: {
+      type: Date
     }
   },
   { timestamps: true }

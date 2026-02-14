@@ -1,5 +1,8 @@
 import Comment from "../models/comment.models.js";
 
+
+
+// Service to add a comment to an artifact
 export const addCommentService = async ({
   artifactId,
   userId,
@@ -16,8 +19,10 @@ export const addCommentService = async ({
   });
 };
 
+
+// Service to get all comments for an artifact
 export const getCommentsService = async (artifactId) => {
   return await Comment.find({ artifact: artifactId })
     .populate("user", "name")
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 }); // Sort by creation time descending - newest first
 };

@@ -6,7 +6,7 @@ import Thread from "../models/thread.model.js";
 export const getChatsByThreadService = async (threadId) => {
     return await Chat.find({ thread: threadId })
                      .populate("sender", "name email")
-                     .sort({ createdAt: 1 });
+                     .sort({ createdAt: 1 });  // Sort by creation time ascending - oldest first
 
 };
 

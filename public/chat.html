@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .chat-container {
+      background: #ffffff;
+      width: 400px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    h3 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: #2a5298;
+    }
+
+    input {
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 14px;
+    }
+
+    input:focus {
+      border-color: #2a5298;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      background: #2a5298;
+      color: white;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #1e3c72;
+    }
+
+    #messages {
+      margin-top: 15px;
+      padding: 10px;
+      height: 150px;
+      overflow-y: auto;
+      border-radius: 8px;
+      background: #f4f6fa;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    #messages div {
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      background: #e3e9f5;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+
+<h3>Live Chat Test</h3>
+
+<input id="userId" placeholder="Your User ID" />
+<button onclick="connectUser()">Connect</button>
+
+<br>
+
+<input id="receiverId" placeholder="Receiver ID" />
+<input id="message" placeholder="Message" />
+<button onclick="sendMessage()">Send</button>
+
+<div id="messages"></div>
+
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<script>
+  const socket = io("http://localhost:8080");
+
+  function connectUser() {
+    const userId = document.getElementById("userId").value;
+    socket.emit("user-online", userId);
+  }
+
+  function sendMessage() {
+    const senderId = document.getElementById("userId").value;
+    const receiverId = document.getElementById("receiverId").value;
+    const message = document.getElementById("message").value;
+
+    socket.emit("send-message", {
+      senderId,
+      receiverId,
+      message
+    });
+  }
+
+  socket.on("receive-message", (data) => {
+    appendMessage("Received: " + data.message);
+  });
+
+  socket.on("message-sent", (data) => {
+    appendMessage("Sent: " + data.message);
+  });
+
+  function appendMessage(text) {
+    const div = document.createElement("div");
+    div.innerText = text;
+    document.getElementById("messages").appendChild(div);
+  }
+</script>
+
+</body>
+</html>

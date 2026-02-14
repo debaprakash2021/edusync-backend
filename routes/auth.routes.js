@@ -4,15 +4,14 @@ import {
   verifySignupOtp,
   login
 } from "../controllers/auth.controller.js";
+import { rateLimiter } from "../middlewares/ratelimiter.middleware.js";
 
 const router = express.Router();
 
-/**
- * SIGNUP FLOW
- */
+//SIGNUP FLOW
 
 // Step 1: Initiate signup (generate OTP)
-router.post("/signup/initiate", initiateSignup);
+router.post("/signup/initiate",rateLimiter, initiateSignup);
 
 // Step 2: Verify OTP and create user
 router.post("/signup/verify", verifySignupOtp);

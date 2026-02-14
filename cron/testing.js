@@ -4,7 +4,7 @@ export const testing = () => {
 
     console.log("Testing function schedule");
 
-  cron.schedule("23 15 * * *", () => {
+  cron.schedule("* * * * *", () => {
     console.log("Running at the oreffered time");
   });
 };

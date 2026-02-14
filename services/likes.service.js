@@ -1,5 +1,8 @@
 import Like from "../models/likes.models.js";
 
+
+
+// Service to toggle like/unlike for an artifact
 export const toggleLikeService = async ({ artifactId, userId }) => {
   const existingLike = await Like.findOne({
     artifact: artifactId,
@@ -22,7 +25,7 @@ export const toggleLikeService = async ({ artifactId, userId }) => {
 
 
 
-
+// Service to get total like count for an artifact
 export const getLikeCountService = async (artifactId) => {
   const count = await Like.countDocuments({ artifact: artifactId });
   return count;

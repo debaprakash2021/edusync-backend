@@ -4,9 +4,9 @@ import {
   loginService
 } from "../services/auth.service.js";
 
-/**
- * POST /auth/signup/initiate
- */
+
+// POST /auth/signup/initiate
+// Controller to initiate signup by generating OTP
 export const initiateSignup = async (req, res) => {
   try {
     const { email } = req.body;
@@ -33,9 +33,10 @@ export const initiateSignup = async (req, res) => {
   }
 };
 
-/**
- * POST /auth/signup/verify
- */
+
+
+// POST /auth/signup/verify
+// Controller to verify OTP and complete user registration
 export const verifySignupOtp = async (req, res) => {
   try {
     const { email, otp, name, password,role } = req.body;
@@ -58,7 +59,7 @@ export const verifySignupOtp = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User signed up successfully",
-      user
+      user:user
     });
   } catch (error) {
     res.status(400).json({
@@ -69,37 +70,9 @@ export const verifySignupOtp = async (req, res) => {
 };
 
 
-// export const login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
 
-//     if (!email || !password) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Email and password required"
-//       });
-//     }
-
-//     const result = await loginService(email, password);
-    
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Login successful",
-//       ...result
-//     });
-//   } catch (error) {
-//     res.status(401).json({
-//       success: false,
-//       message: error.message
-//     });
-//   }
-// };
-
-
-// //cookies version  
-
-
+// Login controller with cookie-based authentication
+// POST /auth/login
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -108,7 +81,7 @@ export const login = async (req, res) => {
 
     res.cookie("token", result.token, {
       httpOnly: true,
-      secure: false, // true in production (HTTPS)
+      secure: false,                           // true in production (HTTPS)
       sameSite: "lax",
       maxAge: 60 * 60 * 1000 // 1 hour
     });
