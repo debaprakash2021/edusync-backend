@@ -14,7 +14,7 @@ export const addComment = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      comment:comment
+      comment: comment
     });
   } catch (error) {
     res.status(400).json({
@@ -24,17 +24,15 @@ export const addComment = async (req, res) => {
   }
 };
 
-
-
-
 // Controller to get all comments for an artifact
+// ✅ FIXED: Now passes artifactId (req.params.id) to service
 export const getComments = async (req, res) => {
   try {
-    const comments = await getCommentsService();
+    const comments = await getCommentsService(req.params.id); // ✅ THE FIX IS HERE
 
     res.status(200).json({
       success: true,
-      comments:comments
+      comments: comments
     });
   } catch (error) {
     res.status(error.statusCode || 500).json({
