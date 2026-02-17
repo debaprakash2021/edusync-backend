@@ -23,12 +23,13 @@ export const getChartByThread = async (req, res) => {
 
 
 // Controller to send a chat message
+// ✅ FIXED: Use consistent req.user.id instead of req.user._id || req.user.id
 export const sendChat = async (req, res) => {
     try {
-        const senderId = req.user._id || req.user.id;
+        const senderId = req.user.id; // ✅ Standardized to req.user.id
         const { receiverId, message } = req.body;
 
-        const chat = await sendChatService({senderId, receiverId, message});
+        const chat = await sendChatService(senderId, receiverId, message);
 
         res.status(201).json({
             success: true,
