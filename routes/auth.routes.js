@@ -4,9 +4,10 @@ import {
   verifySignupOtp, 
   login 
 } from "../controllers/auth.controller.js";
-import { rateLimiter } from "../middlewares/ratelimiter.middleware.js";
 
-// ✅ ADD THIS: Import validation
+// ✅ UPDATED: Import specific limiters
+import { authLimiter, otpLimiter } from "../middlewares/ratelimiter.middleware.js";
+
 import { 
   validate,
   signupInitiateValidation,
@@ -16,25 +17,27 @@ import {
 
 const router = express.Router();
 
-// ✅ ADD validate() middleware to each route
+// ✅ UPDATED: Use otpLimiter for OTP generation (very strict)
 router.post(
   "/signup/initiate", 
-  rateLimiter, 
-  validate(signupInitiateValidation),  // ✅ NEW
+  otpLimiter,  // ✅ Changed from rateLimiter to otpLimiter (3 req / 15min)
+  validate(signupInitiateValidation),
   initiateSignup
 );
 
+// ✅ UPDATED: Use authLimiter for signup verification
 router.post(
   "/signup/verify", 
-  rateLimiter, 
-  validate(signupVerifyValidation),  // ✅ NEW
+  authLimiter,  // ✅ Changed to authLimiter (5 req / 15min)
+  validate(signupVerifyValidation),
   verifySignupOtp
 );
 
+// ✅ UPDATED: Use authLimiter for login (prevent brute force)
 router.post(
   "/login", 
-  rateLimiter, 
-  validate(loginValidation),  // ✅ NEW
+  authLimiter,  // ✅ Changed to authLimiter (5 req / 15min)
+  validate(loginValidation),
   login
 );
 
