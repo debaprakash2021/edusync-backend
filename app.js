@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import fs from "fs";
 
+import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import artifactRoutes from "./routes/artifact.routes.js";
 import likes from "./routes/likes.routes.js";
@@ -48,5 +49,8 @@ app.use("/artifacts", artifactRoutes);
 app.use("/likes", likes);
 app.use("/comments", comment);
 app.use("/chat",chatRoutes);
+
+app.use(notFoundHandler);   // Catches 404 errors
+app.use(errorHandler);      // Catches all other errors
 
 export default app;
