@@ -2,8 +2,8 @@ import { asyncHandler } from "../middlewares/errorHandler.middleware.js";
 import { ApiResponse } from "../utils/response.js";
 import { createArtifactService, getArtifactsService } from "../services/artifact.service.js";
 
-// ✅ UPDATED: Remove try-catch, use asyncHandler
 export const createArtifact = asyncHandler(async (req, res) => {
+  // ✅ title, content already validated by middleware!
   const artifact = await createArtifactService({
     title: req.body.title,
     content: req.body.content,
@@ -15,6 +15,7 @@ export const createArtifact = asyncHandler(async (req, res) => {
 });
 
 export const getArtifacts = asyncHandler(async (req, res) => {
+  // ✅ Query params already validated by middleware!
   const artifacts = await getArtifactsService({
     userId: req.user.id,
     role: req.user.role

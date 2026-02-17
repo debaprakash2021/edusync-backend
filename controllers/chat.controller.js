@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/response.js";
 import { getChatsByThreadService, sendChatService } from "../services/chat.service.js";
 
 export const getChartByThread = asyncHandler(async (req, res) => {
+  // ✅ threadId already validated!
   const { threadId } = req.params;
   const chats = await getChatsByThreadService(threadId);
 
@@ -10,6 +11,7 @@ export const getChartByThread = asyncHandler(async (req, res) => {
 });
 
 export const sendChat = asyncHandler(async (req, res) => {
+  // ✅ receiverId and message already validated!
   const senderId = req.user.id;
   const { receiverId, message } = req.body;
 

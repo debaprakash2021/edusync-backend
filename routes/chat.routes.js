@@ -2,9 +2,27 @@ import express from "express";
 import { getChartByThread, sendChat } from "../controllers/chat.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
-const router= express.Router();
+// ✅ ADD THIS
+import {
+  validate,
+  sendChatValidation,
+  getChatsByThreadValidation
+} from "../middlewares/validation.middleware.js";
 
-router.get("/:threadId",authMiddleware,getChartByThread);
-router.post("/",authMiddleware,sendChat);
+const router = express.Router();
+
+router.get(
+  "/:threadId",
+  authMiddleware,
+  validate(getChatsByThreadValidation),  // ✅ NEW
+  getChartByThread
+);
+
+router.post(
+  "/",
+  authMiddleware,
+  validate(sendChatValidation),  // ✅ NEW
+  sendChat
+);
 
 export default router;
