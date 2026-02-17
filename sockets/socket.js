@@ -2,25 +2,20 @@ import { sendChatService } from "../services/chat.service.js";
 
 export const registerSocketHandlers = (io) => {
 
-// Map to track online users: userId -> socketId
+  // Map to track online users: userId -> socketId
   const onlineUsers = new Map();
 
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-// USER ONLINE------------------------------------>
+    // USER ONLINE------------------------------------>
     socket.on("user-online", (userId) => {
-
       onlineUsers.set(userId, socket.id);
-
       console.log("Online Users:", onlineUsers);
     });
 
-
-// SEND MESSAGE------------------------------------------>
-
+    // SEND MESSAGE------------------------------------------>
     socket.on("send-message", async (data) => {
-
       try {
         const { senderId, receiverId, message } = data;
 
@@ -28,14 +23,8 @@ export const registerSocketHandlers = (io) => {
           return;
         }
 
-        
-
-        // 1. Save chat message to DB
-        const chat = await sendChatService({
-          senderId,
-          receiverId,
-          message
-        });
+        // ✅ FIXED: Pass individual parameters, not an object
+        const chat = await sendChatService(senderId, receiverId, message);
 
         // 2. Emit message to receiver if online
         const receiverSocketId = onlineUsers.get(receiverId);
@@ -50,13 +39,10 @@ export const registerSocketHandlers = (io) => {
       } catch (error) {
         console.log("Socket error:", error.message);
       }
-
     });
 
-// DISCONNECT-------------------------------------------------->
-
+    // DISCONNECT-------------------------------------------------->
     socket.on("disconnect", () => {
-
       for (let [userId, sockId] of onlineUsers.entries()) {
         if (sockId === socket.id) {
           onlineUsers.delete(userId);
