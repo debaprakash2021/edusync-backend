@@ -1,11 +1,12 @@
 import express from "express";
 import { createArtifact, getArtifacts } from "../controllers/artifact.controller.js";
-import { rateLimiter } from "../middlewares/ratelimiter.middleware.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../middlewares/role.middleware.js";
 import { upload } from "../middlewares/upload.middleware.js";
 
-// ✅ ADD THIS
+// ✅ UPDATED: Import specific limiters
+import { uploadLimiter, apiLimiter } from "../middlewares/ratelimiter.middleware.js";
+
 import {
   validate,
   createArtifactValidation,
@@ -14,20 +15,23 @@ import {
 
 const router = express.Router();
 
+// ✅ UPDATED: Use uploadLimiter for file uploads (10 req / hour)
 router.post(
   "/", 
   authMiddleware, 
+  uploadLimiter,  // ✅ Changed to uploadLimiter
   upload.single("media"), 
-  validate(createArtifactValidation),  // ✅ NEW
+  validate(createArtifactValidation),
   createArtifact
 );
 
+// ✅ UPDATED: Use apiLimiter for browsing (100 req / min)
 router.get(
   "/",
-  rateLimiter, 
+  apiLimiter,  // ✅ Changed to apiLimiter
   authMiddleware,
   authorizeRoles("ADMIN"),
-  validate(getArtifactsValidation),  // ✅ NEW
+  validate(getArtifactsValidation),
   getArtifacts
 );
 

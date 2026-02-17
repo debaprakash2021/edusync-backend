@@ -2,7 +2,9 @@ import express from "express";
 import { toggleLike, getLikeCount } from "../controllers/likes.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
-// ✅ ADD THIS
+// ✅ UPDATED: Import specific limiters
+import { interactionLimiter, apiLimiter } from "../middlewares/ratelimiter.middleware.js";
+
 import {
   validate,
   toggleLikeValidation,
@@ -11,16 +13,20 @@ import {
 
 const router = express.Router();
 
+// ✅ UPDATED: Use interactionLimiter for toggling likes (30 req / min)
 router.post(
   "/:id/like", 
   authMiddleware, 
-  validate(toggleLikeValidation),  // ✅ NEW
+  interactionLimiter,  // ✅ Changed to interactionLimiter
+  validate(toggleLikeValidation),
   toggleLike
 );
 
+// ✅ UPDATED: Use apiLimiter for getting like count (100 req / min)
 router.get(
   "/:id/likes", 
-  validate(getLikeCountValidation),  // ✅ NEW
+  apiLimiter,  // ✅ Changed to apiLimiter
+  validate(getLikeCountValidation),
   getLikeCount
 );
 
