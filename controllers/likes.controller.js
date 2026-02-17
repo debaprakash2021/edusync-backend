@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/response.js";
 import { toggleLikeService, getLikeCountService } from "../services/likes.service.js";
 
 export const toggleLike = asyncHandler(async (req, res) => {
+  // ✅ artifactId already validated!
   const result = await toggleLikeService({
     artifactId: req.params.id,
     userId: req.user.id
@@ -13,6 +14,7 @@ export const toggleLike = asyncHandler(async (req, res) => {
 });
 
 export const getLikeCount = asyncHandler(async (req, res) => {
+  // ✅ artifactId already validated!
   const count = await getLikeCountService(req.params.id);
 
   return ApiResponse.success(res, { likes: count }, "Like count retrieved successfully");
