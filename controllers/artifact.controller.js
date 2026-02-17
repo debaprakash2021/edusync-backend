@@ -1,56 +1,24 @@
-import { createArtifactService ,getArtifactsService} from "../services/artifact.service.js";
+import { asyncHandler } from "../middlewares/errorHandler.middleware.js";
+import { ApiResponse } from "../utils/response.js";
+import { createArtifactService, getArtifactsService } from "../services/artifact.service.js";
 
+// ✅ UPDATED: Remove try-catch, use asyncHandler
+export const createArtifact = asyncHandler(async (req, res) => {
+  const artifact = await createArtifactService({
+    title: req.body.title,
+    content: req.body.content,
+    userId: req.user.id,
+    filePath: req.file?.path
+  });
 
+  return ApiResponse.created(res, { artifact }, "Artifact created successfully");
+});
 
-// POST /artifacts
-// Controller to create a new artifact
-export const createArtifact = async (req, res) => {
-  try {
-    const artifact = await createArtifactService({
-      title: req.body.title,
-      content: req.body.content,
-      userId: req.user.id,
-      filePath:req.file?.path           // injected by auth middleware
-    });
+export const getArtifacts = asyncHandler(async (req, res) => {
+  const artifacts = await getArtifactsService({
+    userId: req.user.id,
+    role: req.user.role
+  });
 
-    res.status(201).json({
-      success: true,
-      message: "Artifact created successfully",
-      artifact
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
-
-
-
-// GET /artifacts
-// Controller to fetch artifacts based on user role
-export const getArtifacts = async (req, res) => {
-  try {
-
-    console.log(req.user); // Debugging line to check user info from auth middleware
-
-    const artifacts = await getArtifactsService({
-      userId: req.user.id,
-      role: req.user.role
-    });
-
-    res.status(200).json({
-      success: true,
-      artifacts
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
-
+  return ApiResponse.success(res, { artifacts }, "Artifacts retrieved successfully");
+});

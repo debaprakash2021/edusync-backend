@@ -1,101 +1,53 @@
+import { asyncHandler } from "../middlewares/errorHandler.middleware.js";
+import { ApiResponse } from "../utils/response.js";
+import { ValidationError } from "../utils/errors.js";
 import {
   initiateSignupService,
   verifySignupOtpService,
   loginService
 } from "../services/auth.service.js";
 
+export const initiateSignup = asyncHandler(async (req, res) => {
+  const { email } = req.body;
 
-// POST /auth/signup/initiate
-// Controller to initiate signup by generating OTP
-export const initiateSignup = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required"
-      });
-    }
-
-    const result = await initiateSignupService(email);
-
-    res.status(200).json({
-      success: true,
-      message: "OTP generated successfully",
-      ...result
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
-    });
+  if (!email) {
+    throw new ValidationError("Email is required");
   }
-};
 
+  const result = await initiateSignupService(email);
 
+  return ApiResponse.success(res, result, "OTP generated successfully");
+});
 
-// POST /auth/signup/verify
-// Controller to verify OTP and complete user registration
-export const verifySignupOtp = async (req, res) => {
-  try {
-    const { email, otp, name, password,role } = req.body;
+export const verifySignupOtp = asyncHandler(async (req, res) => {
+  const { email, otp, name, password, role } = req.body;
 
-    if (!email || !otp || !name || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required"
-      });
-    }
-
-    const user = await verifySignupOtpService({
-      email,
-      otp,
-      name,
-      password,
-      role
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "User signed up successfully",
-      user:user
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
-    });
+  if (!email || !otp || !name || !password) {
+    throw new ValidationError("All fields are required");
   }
-};
 
+  const user = await verifySignupOtpService({
+    email,
+    otp,
+    name,
+    password,
+    role
+  });
 
+  return ApiResponse.created(res, { user }, "User signed up successfully");
+});
 
-// Login controller with cookie-based authentication
-// POST /auth/login
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+export const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    const result = await loginService(email, password);
+  const result = await loginService(email, password);
 
-    res.cookie("token", result.token, {
-      httpOnly: true,
-      secure: false,                           // true in production (HTTPS)
-      sameSite: "lax",
-      maxAge: 60 * 60 * 1000 // 1 hour
-    });
+  res.cookie("token", result.token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 1000
+  });
 
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      user: result.user
-    });
-  } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
+  return ApiResponse.success(res, { user: result.user }, "Login successful");
+});
