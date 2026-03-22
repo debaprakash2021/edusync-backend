@@ -9,16 +9,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/debaprakash2021/pep-enhanced-learning.git"
+    "url": "git+https://github.com/debaprakash2021/edusync-backend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/debaprakash2021/pep-enhanced-learning/issues"
+    "url": "https://github.com/debaprakash2021/edusync-backend/issues"
   },
-  "homepage": "https://github.com/debaprakash2021/pep-enhanced-learning#readme",
+  "homepage": "https://github.com/debaprakash2021/edusync-backend#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.9.0",
