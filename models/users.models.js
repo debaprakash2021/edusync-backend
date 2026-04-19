@@ -6,36 +6,43 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true
+      lowercase: true,
     },
     password: {
       type: String,
       required: true,
       minlength: 8,
-      select: false // do not expose the password hash
+      select: false,
     },
     role: {
       type: String,
       enum: ["ADMIN", "EDITOR", "VIEWER"],
-      default: "VIEWER"
-    }
+      default: "VIEWER",
+    },
+    avatar: {
+      type: String,
+      default: null,
+    },
+    bio: {
+      type: String,
+      maxlength: 300,
+      default: "",
+    },
   },
   { timestamps: true }
 );
 
-
 userSchema.pre("save", async function (next) {
-  //if password is new || modified then only hash , otherwise don't
   if (!this.isModified("password")) return next();
-
   const saltRounds = 10;
   this.password = await bcrypt.hash(this.password, saltRounds);
-
+  next();
 });
+
 export default mongoose.model("User", userSchema);
