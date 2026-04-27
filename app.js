@@ -29,6 +29,9 @@ import subscriptionRoutes from "./routes/subscription.routes.js";
 import { expireSubscriptions } from "./cron/expireSubscriptions.js";
 import earningRoutes from "./routes/earning.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.middleware.js";
+import liveClassRoutes from "./routes/liveClass.routes.js";
+
+
 
 const app = express();
 
@@ -104,6 +107,7 @@ app.use("/invoices", invoiceRoutes);
 app.use("/coupons", couponRoutes);
 app.use("/subscriptions", subscriptionRoutes);
 app.use("/earnings", earningRoutes);
+app.use("/live-classes", liveClassRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/debaprakash2021/edusync-backend#readme",
   "dependencies": {
+    "agora-token": "^2.0.5",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.7",
