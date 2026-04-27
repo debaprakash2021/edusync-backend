@@ -25,6 +25,8 @@ import webHookRoutes from "./webhook/webhook.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import invoiceRoutes from "./routes/invoice.routes.js";
 import couponRoutes from "./routes/coupon.routes.js";
+import subscriptionRoutes from "./routes/subscription.routes.js";
+import { expireSubscriptions } from "./cron/expireSubscriptions.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
@@ -81,6 +83,7 @@ app.get("/", (req, res) => {
 });
 
 testing();
+expireSubscriptions();
 
 app.use("/webhook", webHookRoutes);
 app.use("/auth", authRoutes);
@@ -98,8 +101,10 @@ app.use("/search", searchRoutes);
 app.use("/payments", paymentRoutes);
 app.use("/invoices", invoiceRoutes);
 app.use("/coupons", couponRoutes);
+app.use("/subscriptions", subscriptionRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
+
 
 export default app;
