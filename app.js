@@ -24,6 +24,7 @@ import { testing } from "./cron/testing.js";
 import webHookRoutes from "./webhook/webhook.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import invoiceRoutes from "./routes/invoice.routes.js";
+import couponRoutes from "./routes/coupon.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
@@ -96,6 +97,7 @@ app.use("/bookmarks", bookmarkRoutes);
 app.use("/search", searchRoutes);
 app.use("/payments", paymentRoutes);
 app.use("/invoices", invoiceRoutes);
+app.use("/coupons", couponRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -3,8 +3,10 @@ import razorpay from "../config/razorpay.js";
 import Order from "../models/order.model.js";
 import Course from "../models/course.model.js";
 import Enrollment from "../models/enrollment.model.js";
+import { validateCouponService, recordCouponUsageService } from "./coupon.service.js";
+import { generateAndSendInvoiceService } from "./invoice.service.js";
 
-export const createOrderService = async (studentId, courseId) => {
+export const createOrderService = async (studentId, courseId, couponCode = null) => {
   const course = await Course.findById(courseId);
   if (!course) throw new Error("Course not found");
   if (course.status !== "PUBLISHED") throw new Error("Course is not available");
@@ -15,9 +17,18 @@ export const createOrderService = async (studentId, courseId) => {
   });
   if (alreadyEnrolled) throw new Error("Already enrolled in this course");
 
-  if (course.isFree || course.price === 0) throw new Error("This course is free, enroll directly");
+  if (course.isFree || course.price === 0)
+    throw new Error("This course is free, enroll directly");
 
-  const amountInPaise = course.price * 100;
+  let finalAmount = course.price;
+  let couponData = null;
+
+  if (couponCode) {
+    couponData = await validateCouponService(couponCode, studentId, courseId);
+    finalAmount = couponData.finalAmount;
+  }
+
+  const amountInPaise = finalAmount * 100;
 
   const razorpayOrder = await razorpay.orders.create({
     amount: amountInPaise,
@@ -26,22 +37,38 @@ export const createOrderService = async (studentId, courseId) => {
     notes: {
       courseId: courseId.toString(),
       studentId: studentId.toString(),
+      couponCode: couponCode || "",
     },
   });
 
-  await Order.create({
+  const order = await Order.create({
     student: studentId,
     course: courseId,
     razorpayOrderId: razorpayOrder.id,
-    amount: course.price,
+    amount: finalAmount,
+    originalAmount: course.price,
+    discountAmount: course.price - finalAmount,
+    coupon: couponData?.couponId || null,
     currency: "INR",
   });
+
+  if (couponData) {
+    await recordCouponUsageService(
+      couponData.couponId,
+      studentId,
+      order._id,
+      couponData.discountAmount
+    );
+  }
 
   return {
     orderId: razorpayOrder.id,
     amount: razorpayOrder.amount,
     currency: razorpayOrder.currency,
     courseName: course.title,
+    originalPrice: course.price,
+    discountAmount: course.price - finalAmount,
+    finalAmount,
     keyId: process.env.RAZORPAY_KEY_ID,
   };
 };

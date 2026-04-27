@@ -26,9 +26,22 @@ const orderSchema = new mongoose.Schema(
       default: "INR",
     },
     razorpayPaymentId: {
-  type: String,
-  default: null,
-},
+    type: String,
+    default: null,
+    },
+    originalAmount: {
+    type: Number,
+    default: null,
+    },
+    discountAmount: {
+      type: Number,
+      default: 0,
+    },
+    coupon: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Coupon",
+      default: null,
+    },
     status: {
       type: String,
       enum: ["CREATED", "PAID", "FAILED"],

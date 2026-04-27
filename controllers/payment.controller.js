@@ -6,12 +6,14 @@ import {
 import { sendSuccess, sendError } from "../utils/response.js";
 export const createOrder = async (req, res) => {
   try {
-    const result = await createOrderService(req.user.id, req.params.courseId);
+    const { couponCode } = req.body;
+    const result = await createOrderService(req.user.id, req.params.courseId, couponCode);
     sendSuccess(res, 201, "Order created", result);
   } catch (err) {
     sendError(res, 400, err.message);
   }
 };
+
 export const verifyPayment = async (req, res) => {
   try {
     const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
