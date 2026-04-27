@@ -5,6 +5,7 @@ import Course from "../models/course.model.js";
 import Enrollment from "../models/enrollment.model.js";
 import { validateCouponService, recordCouponUsageService } from "./coupon.service.js";
 import { generateAndSendInvoiceService } from "./invoice.service.js";
+import { recordEarningService } from "./earning.service.js";
 
 export const createOrderService = async (studentId, courseId, couponCode = null) => {
   const course = await Course.findById(courseId);
@@ -111,6 +112,9 @@ export const verifyPaymentService = async (
       $inc: { enrollmentCount: 1 },
     });
   }
+  recordEarningService(order._id).catch((err) =>
+  console.error("Earning record failed:", err.message)
+);
 
   return {
     message: "Payment verified and enrollment successful",
@@ -167,6 +171,9 @@ export const handleWebhookService = async (rawBody, signature) => {
       { status: "FAILED" }
     );
   }
+  recordEarningService(order._id).catch((err) =>
+  console.error("Earning record failed:", err.message)
+);
 
   return { received: true };
 };

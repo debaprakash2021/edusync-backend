@@ -27,6 +27,7 @@ import invoiceRoutes from "./routes/invoice.routes.js";
 import couponRoutes from "./routes/coupon.routes.js";
 import subscriptionRoutes from "./routes/subscription.routes.js";
 import { expireSubscriptions } from "./cron/expireSubscriptions.js";
+import earningRoutes from "./routes/earning.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
@@ -102,6 +103,7 @@ app.use("/payments", paymentRoutes);
 app.use("/invoices", invoiceRoutes);
 app.use("/coupons", couponRoutes);
 app.use("/subscriptions", subscriptionRoutes);
+app.use("/earnings", earningRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
